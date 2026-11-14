@@ -12,9 +12,12 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedFaturamentoRouteImport } from './routes/_authenticated/faturamento'
 import { Route as AuthenticatedPortalRouteImport } from './routes/_authenticated/portal'
 import { Route as AuthenticatedUsuariosRouteImport } from './routes/_authenticated/usuarios'
+import { Route as AuthenticatedFinanceiroIndexRouteImport } from './routes/_authenticated/financeiro/index'
 import { Route as AuthenticatedSetorSlugRouteImport } from './routes/_authenticated/setor.$slug'
+import { Route as AuthenticatedFinanceiroAbasSheetIdRouteImport } from './routes/_authenticated/financeiro/abas.$sheetId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -30,6 +33,12 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedFaturamentoRoute =
+  AuthenticatedFaturamentoRouteImport.update({
+    id: '/faturamento',
+    path: '/faturamento',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedPortalRoute = AuthenticatedPortalRouteImport.update({
   id: '/portal',
   path: '/portal',
@@ -40,48 +49,88 @@ const AuthenticatedUsuariosRoute = AuthenticatedUsuariosRouteImport.update({
   path: '/usuarios',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedFinanceiroIndexRoute =
+  AuthenticatedFinanceiroIndexRouteImport.update({
+    id: '/financeiro/',
+    path: '/financeiro/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedSetorSlugRoute = AuthenticatedSetorSlugRouteImport.update({
   id: '/setor/$slug',
   path: '/setor/$slug',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedFinanceiroAbasSheetIdRoute =
+  AuthenticatedFinanceiroAbasSheetIdRouteImport.update({
+    id: '/financeiro/abas/$sheetId',
+    path: '/financeiro/abas/$sheetId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/faturamento': typeof AuthenticatedFaturamentoRoute
   '/portal': typeof AuthenticatedPortalRoute
   '/usuarios': typeof AuthenticatedUsuariosRoute
   '/setor/$slug': typeof AuthenticatedSetorSlugRoute
+  '/financeiro/': typeof AuthenticatedFinanceiroIndexRoute
+  '/financeiro/abas/$sheetId': typeof AuthenticatedFinanceiroAbasSheetIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/faturamento': typeof AuthenticatedFaturamentoRoute
   '/portal': typeof AuthenticatedPortalRoute
   '/usuarios': typeof AuthenticatedUsuariosRoute
   '/setor/$slug': typeof AuthenticatedSetorSlugRoute
+  '/financeiro': typeof AuthenticatedFinanceiroIndexRoute
+  '/financeiro/abas/$sheetId': typeof AuthenticatedFinanceiroAbasSheetIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_authenticated/faturamento': typeof AuthenticatedFaturamentoRoute
   '/_authenticated/portal': typeof AuthenticatedPortalRoute
   '/_authenticated/usuarios': typeof AuthenticatedUsuariosRoute
   '/_authenticated/setor/$slug': typeof AuthenticatedSetorSlugRoute
+  '/_authenticated/financeiro/': typeof AuthenticatedFinanceiroIndexRoute
+  '/_authenticated/financeiro/abas/$sheetId': typeof AuthenticatedFinanceiroAbasSheetIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/portal' | '/usuarios' | '/setor/$slug'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/faturamento'
+    | '/portal'
+    | '/usuarios'
+    | '/setor/$slug'
+    | '/financeiro/'
+    | '/financeiro/abas/$sheetId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/portal' | '/usuarios' | '/setor/$slug'
+  to:
+    | '/'
+    | '/auth'
+    | '/faturamento'
+    | '/portal'
+    | '/usuarios'
+    | '/setor/$slug'
+    | '/financeiro'
+    | '/financeiro/abas/$sheetId'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/_authenticated/faturamento'
     | '/_authenticated/portal'
     | '/_authenticated/usuarios'
     | '/_authenticated/setor/$slug'
+    | '/_authenticated/financeiro/'
+    | '/_authenticated/financeiro/abas/$sheetId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -113,6 +162,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/faturamento': {
+      id: '/_authenticated/faturamento'
+      path: '/faturamento'
+      fullPath: '/faturamento'
+      preLoaderRoute: typeof AuthenticatedFaturamentoRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/portal': {
       id: '/_authenticated/portal'
       path: '/portal'
@@ -127,6 +183,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedUsuariosRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/financeiro/': {
+      id: '/_authenticated/financeiro/'
+      path: '/financeiro'
+      fullPath: '/financeiro/'
+      preLoaderRoute: typeof AuthenticatedFinanceiroIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/setor/$slug': {
       id: '/_authenticated/setor/$slug'
       path: '/setor/$slug'
@@ -134,19 +197,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSetorSlugRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/financeiro/abas/$sheetId': {
+      id: '/_authenticated/financeiro/abas/$sheetId'
+      path: '/financeiro/abas/$sheetId'
+      fullPath: '/financeiro/abas/$sheetId'
+      preLoaderRoute: typeof AuthenticatedFinanceiroAbasSheetIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedFaturamentoRoute: typeof AuthenticatedFaturamentoRoute
   AuthenticatedPortalRoute: typeof AuthenticatedPortalRoute
   AuthenticatedUsuariosRoute: typeof AuthenticatedUsuariosRoute
   AuthenticatedSetorSlugRoute: typeof AuthenticatedSetorSlugRoute
+  AuthenticatedFinanceiroIndexRoute: typeof AuthenticatedFinanceiroIndexRoute
+  AuthenticatedFinanceiroAbasSheetIdRoute: typeof AuthenticatedFinanceiroAbasSheetIdRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedFaturamentoRoute: AuthenticatedFaturamentoRoute,
   AuthenticatedPortalRoute: AuthenticatedPortalRoute,
   AuthenticatedUsuariosRoute: AuthenticatedUsuariosRoute,
   AuthenticatedSetorSlugRoute: AuthenticatedSetorSlugRoute,
+  AuthenticatedFinanceiroIndexRoute: AuthenticatedFinanceiroIndexRoute,
+  AuthenticatedFinanceiroAbasSheetIdRoute:
+    AuthenticatedFinanceiroAbasSheetIdRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

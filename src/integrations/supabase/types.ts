@@ -14,6 +14,93 @@ export type Database = {
   }
   public: {
     Tables: {
+      faturamento: {
+        Row: {
+          ano: number
+          contas: number
+          created_at: string
+          faturado: number
+          glosado: number
+          id: string
+          mes: string
+          operadora: string
+          pago: number
+          pendente: number
+        }
+        Insert: {
+          ano?: number
+          contas?: number
+          created_at?: string
+          faturado?: number
+          glosado?: number
+          id?: string
+          mes: string
+          operadora: string
+          pago?: number
+          pendente?: number
+        }
+        Update: {
+          ano?: number
+          contas?: number
+          created_at?: string
+          faturado?: number
+          glosado?: number
+          id?: string
+          mes?: string
+          operadora?: string
+          pago?: number
+          pendente?: number
+        }
+        Relationships: []
+      }
+      glosas: {
+        Row: {
+          ano: number
+          created_at: string
+          id: string
+          mes: string
+          motivo: string | null
+          numero_guia: string | null
+          operadora: string
+          paciente: string | null
+          procedimento: string | null
+          status: string
+          updated_at: string
+          valor_glosado: number
+          valor_recuperado: number
+        }
+        Insert: {
+          ano?: number
+          created_at?: string
+          id?: string
+          mes: string
+          motivo?: string | null
+          numero_guia?: string | null
+          operadora: string
+          paciente?: string | null
+          procedimento?: string | null
+          status?: string
+          updated_at?: string
+          valor_glosado?: number
+          valor_recuperado?: number
+        }
+        Update: {
+          ano?: number
+          created_at?: string
+          id?: string
+          mes?: string
+          motivo?: string | null
+          numero_guia?: string | null
+          operadora?: string
+          paciente?: string | null
+          procedimento?: string | null
+          status?: string
+          updated_at?: string
+          valor_glosado?: number
+          valor_recuperado?: number
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -143,6 +230,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      can_see_sector: {
+        Args: { _slug: string; _user_id: string }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
