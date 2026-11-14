@@ -14,16 +14,149 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          created_at: string
+          email: string | null
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          id?: string
+        }
+        Relationships: []
+      }
+      reports: {
+        Row: {
+          columns: Json
+          created_at: string
+          file_name: string
+          id: string
+          rows: Json
+          sector_id: string
+          sheet_name: string
+          uploaded_by: string
+        }
+        Insert: {
+          columns?: Json
+          created_at?: string
+          file_name: string
+          id?: string
+          rows?: Json
+          sector_id: string
+          sheet_name: string
+          uploaded_by?: string
+        }
+        Update: {
+          columns?: Json
+          created_at?: string
+          file_name?: string
+          id?: string
+          rows?: Json
+          sector_id?: string
+          sheet_name?: string
+          uploaded_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reports_sector_id_fkey"
+            columns: ["sector_id"]
+            isOneToOne: false
+            referencedRelation: "sectors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sector_members: {
+        Row: {
+          sector_id: string
+          user_id: string
+        }
+        Insert: {
+          sector_id: string
+          user_id: string
+        }
+        Update: {
+          sector_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sector_members_sector_id_fkey"
+            columns: ["sector_id"]
+            isOneToOne: false
+            referencedRelation: "sectors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sectors: {
+        Row: {
+          description: string | null
+          id: string
+          name: string
+          position: number
+          slug: string
+        }
+        Insert: {
+          description?: string | null
+          id?: string
+          name: string
+          position?: number
+          slug: string
+        }
+        Update: {
+          description?: string | null
+          id?: string
+          name?: string
+          position?: number
+          slug?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      is_sector_member: {
+        Args: { _sector_id: string; _user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +283,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+    },
   },
 } as const
