@@ -68,10 +68,10 @@ function SectorPage() {
       const wb = XLSX.read(await file.arrayBuffer());
       const { data: auth } = await supabase.auth.getUser();
       const inserts = wb.SheetNames.map((name) => {
-        const rows = XLSX.utils.sheet_to_json<Row>(wb.Sheets[name], { defval: "" });
-        const columns = rows.length ? Object.keys(rows[0]) : [];
-        return { sector_id: sector.id, file_name: file.name, sheet_name: name, columns, rows: rows as unknown as Json, uploaded_by: auth.user!.id };
-      }).filter((s) => s.rows.length);
+        const rows = XLSX.utils.sheet_to_json<Row>(wb.Sheets[name]!, { defval: "" });
+        const columns = rows.length ? Object.keys(rows[0]!) : [];
+        return { sector_id: sector.id, file_name: file.name, sheet_name: name, columns, rows: rows as unknown as Json, count: rows.length, uploaded_by: auth.user!.id };
+      }).filter((s) => s.count > 0).map(({ count: _c, ...rest }) => rest);
       if (!inserts.length) throw new Error("Planilha vazia");
       const { error } = await supabase.from("reports").insert(inserts);
       if (error) throw error;
