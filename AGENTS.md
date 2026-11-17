@@ -32,3 +32,4 @@ use the editor.
 - Portal routes: private pages live under src/routes/_authenticated (client-side gate, redirects to /auth); / redirects to /portal.
 - Sector access: admins (user_roles) see all sectors; others see sectors listed in sector_members; enforced by RLS. First registered user becomes admin via signup trigger.
 - Spreadsheets are parsed in the browser (xlsx) and stored per sheet as JSON rows in reports; dashboards are derived from them.
+- Imported dashboards live in src/features/{financeiro,faturamento} with routes /financeiro and /faturamento under _authenticated, gated by sector slug (financeiro-custos, faturamento). Faturamento data is in faturamento/glosas tables, read by sector members via can_see_sector RLS.
