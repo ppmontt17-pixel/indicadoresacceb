@@ -3,4 +3,5 @@
 - [ ] Criar a conta de administradora para teste (aguarda cadastro e confirmação de e-mail da usuária)
 - [x] Importar painel FINANCEIRO - ACCEB para dentro do portal
 - [x] Importar telas do FATURAMENTO
-- [ ] Trazer os números do FATURAMENTO (aguarda exportação da usuária) para dentro do portal
+- [x] Botão "Enviar planilha" no painel do faturamento (importa abas de faturamento e glosas)
+- [ ] Usuária envia a planilha real do faturamento pelo novo botão

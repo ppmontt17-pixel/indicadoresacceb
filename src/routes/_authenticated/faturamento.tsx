@@ -50,6 +50,7 @@ import {
 } from "@/components/ui/table";
 import { GlosasPanel, type Glosa } from "@/features/faturamento/glosas-panel";
 import { GlosasComparativo, type GlosaAno } from "@/features/faturamento/glosas-comparativo";
+import { FaturamentoImportButton } from "@/features/faturamento/import-button";
 import { listFaturamento, listGlosasFn } from "@/features/faturamento/data";
 
 export const Route = createFileRoute("/_authenticated/faturamento")({
@@ -230,6 +231,7 @@ function Dashboard() {
             </div>
           </Link>
           <div className="flex flex-wrap items-center gap-2">
+            <FaturamentoImportButton />
             <div className="flex items-center rounded-lg border bg-muted/40 p-1">
               {anosDisponiveis.map((a) => (
                 <Button
