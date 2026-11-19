@@ -1,11 +1,9 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, notFound } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { ArrowLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { accessQuery } from "@/lib/access";
-import { AppShell } from "@/components/AppShell";
-import { buttonVariants } from "@/components/ui/button";
+import { ReceptionShell } from "@/features/recepcao/dashboard-shell";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ReceptionDashboard } from "@/features/recepcao/dashboard";
 import { isReceptionRows } from "@/features/recepcao/report";
@@ -22,6 +20,7 @@ export const Route = createFileRoute("/_authenticated/recepcao")({
 });
 function ReceptionPage(){
   const {sector}=Route.useLoaderData();const {data}=useSuspenseQuery(receptionQuery(sector.id));const [selected,setSelected]=useState("");
+  const [activeGroup,setActiveGroup]=useState(1);
   const report=data.find(r=>r.id===selected)??data[0];
-  return <AppShell><Link to="/setor/$slug" params={{slug:"recepcao"}} className={buttonVariants({variant:"ghost",size:"sm"})}><ArrowLeft/>Setor de Recepção · Atendimento</Link><div className="mt-6 flex flex-wrap items-end justify-between gap-4"><h1 className="font-display text-4xl">Recepção · Atendimento</h1>{report && <Select value={report.id} onValueChange={setSelected}><SelectTrigger className="w-full bg-card sm:w-64"><SelectValue/></SelectTrigger><SelectContent>{data.map(r=><SelectItem key={r.id} value={r.id}>{r.rows[0]?.periodo}</SelectItem>)}</SelectContent></Select>}</div>{report ? <ReceptionDashboard key={report.id} rows={report.rows}/> : <p className="mt-8 text-muted-foreground">Nenhum relatório de recepção enviado.</p>}</AppShell>;
+  return <ReceptionShell active={activeGroup} onSelect={setActiveGroup} headerActions={report && <Select value={report.id} onValueChange={setSelected}><SelectTrigger className="w-48 bg-card sm:w-64"><SelectValue/></SelectTrigger><SelectContent>{data.map(r=><SelectItem key={r.id} value={r.id}>{r.rows[0]?.periodo}</SelectItem>)}</SelectContent></Select>}>{report ? <ReceptionDashboard key={`${report.id}-${activeGroup}`} rows={report.rows} activeGroup={activeGroup}/> : <p className="mt-8 text-muted-foreground">Nenhum relatório de recepção enviado.</p>}</ReceptionShell>;
 }

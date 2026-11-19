@@ -34,5 +34,6 @@ use the editor.
 - Sector access: admins (user_roles) see all sectors; others see sectors listed in sector_members; enforced by RLS. First registered user becomes admin via signup trigger.
 - Reports store per-sheet JSON rows; dashboards derive from these records without browser file inputs or upload handlers.
 - Reception reports normalize sectioned worksheets into period/group/item/quantity rows in reports; the sector and dedicated dashboard share the parser and preserve stated totals independently from detail sums to expose discrepancies.
+- The dedicated reception route owns indicator selection in a sidebar shell; the shared dashboard accepts controlled selection while retaining local tabs when embedded in a sector page.
 - Sector pages own dashboard entry links; shared sector-panel helpers keep mappings consistent. Report inserts retain administrator RLS authorization independently of the UI.
 - Imported dashboards live in src/features/{financeiro,faturamento} with routes /financeiro and /faturamento under _authenticated, gated by sector slug (financeiro-custos, faturamento). Faturamento data is in faturamento/glosas tables, read by sector members via can_see_sector RLS.

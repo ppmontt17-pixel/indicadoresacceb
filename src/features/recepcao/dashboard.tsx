@@ -9,8 +9,9 @@ import { receptionGroups, receptionSummary, type ReceptionRow } from "./report";
 
 const labels = ["Atendimentos", "Convênios", "Especialidades", "Exames", "Recepcionistas", "Avaliações"];
 const fmt = (n: number) => n.toLocaleString("pt-BR");
-export function ReceptionDashboard({ rows }: { rows: ReceptionRow[] }) {
-  const [groupIndex, setGroupIndex] = useState(1);
+export function ReceptionDashboard({ rows, activeGroup }: { rows: ReceptionRow[]; activeGroup?: number }) {
+  const [localGroupIndex, setGroupIndex] = useState(1);
+  const groupIndex = activeGroup ?? localGroupIndex;
   const [search, setSearch] = useState("");
   const summary = useMemo(() => receptionSummary(rows), [rows]);
   const entries = rows.filter((r) => r.grupo === receptionGroups[groupIndex] && r.item !== "TOTAL").sort((a,b) => b.quantidade - a.quantidade);
@@ -31,7 +32,7 @@ export function ReceptionDashboard({ rows }: { rows: ReceptionRow[] }) {
       { label: "Terapias", value: summary.terapias, icon: HeartPulse },
     ].map((k) => <div key={k.label} className="rounded-lg border bg-card p-5 shadow-soft"><k.icon className="mb-4 size-5 text-primary"/><p className="text-xs font-semibold uppercase text-muted-foreground">{k.label}</p><p className="mt-2 font-display text-3xl">{fmt(k.value)}</p>{k.value !== summary.total && <p className="mt-2 text-sm text-muted-foreground">{summary.total ? (k.value / summary.total * 100).toLocaleString("pt-BR", {maximumFractionDigits:1}) : "0"}% do total</p>}</div>)}</div>
     <section>
-      <div className="flex flex-wrap gap-2 border-b pb-4" aria-label="Informações da recepção">{labels.map((label,i) => <Button key={label} variant={groupIndex === i ? "default" : "outline"} onClick={() => {setGroupIndex(i);setSearch("");}}>{label}</Button>)}</div>
+      {activeGroup === undefined && <div className="flex flex-wrap gap-2 border-b pb-4" aria-label="Informações da recepção">{labels.map((label,i) => <Button key={label} variant={groupIndex === i ? "default" : "outline"} onClick={() => {setGroupIndex(i);setSearch("");}}>{label}</Button>)}</div>}
       <div className="my-6 flex flex-wrap items-end justify-between gap-3"><div><h3 className="font-display text-2xl">{labels[groupIndex]}</h3><p className="text-sm text-muted-foreground">{fmt(subtotal)} registros contabilizados · {entries.length} categorias</p></div><div className="relative w-full sm:w-72"><Search className="absolute left-3 top-3 size-4 text-muted-foreground"/><Input aria-label="Buscar categoria" value={search} onChange={(e)=>setSearch(e.target.value)} placeholder="Buscar" className="bg-card pl-9"/></div></div>
       <div className="grid gap-6 lg:grid-cols-2">
         <div className="min-w-0"><p className="mb-3 text-sm text-muted-foreground">{filtered.length > 10 ? "10 maiores volumes" : "Volume por categoria"}</p><ChartContainer config={{ quantidade: { label:"Atendimentos",color:"var(--chart-1)" } }} className="h-[400px] w-full"><BarChart data={filtered.slice(0,10)} layout="vertical" margin={{left:0,right:20}}><CartesianGrid horizontal={false}/><XAxis type="number" tickLine={false}/><YAxis type="category" dataKey="item" width={120} tick={{fontSize:10}} tickFormatter={(v:string)=>v.length>18 ? v.slice(0,17)+"…" : v} tickLine={false}/><ChartTooltip content={<ChartTooltipContent/>}/><Bar dataKey="quantidade" fill="var(--color-quantidade)" radius={4}/></BarChart></ChartContainer></div>
