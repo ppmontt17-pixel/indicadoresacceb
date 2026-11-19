@@ -8,10 +8,10 @@ import { getSectorDestination } from "@/lib/sector-panels";
 export const Route = createFileRoute("/_authenticated/portal")({
   head: () => ({
     meta: [
-      { title: "Indicadores ACCEB - 2026 — Clínica Popular" },
-      { name: "description", content: "Indicadores de 2026 dos setores da ACCEB - CLÍNICA POPULAR." },
-      { property: "og:title", content: "Indicadores ACCEB - 2026 — Clínica Popular" },
-      { property: "og:description", content: "Indicadores de 2026 dos setores da ACCEB - CLÍNICA POPULAR." },
+      { title: "Indicadores ACCEB - 2026 — Centro Médico" },
+      { name: "description", content: "Indicadores de 2026 dos setores da ACCEB - Centro Médico." },
+      { property: "og:title", content: "Indicadores ACCEB - 2026 — Centro Médico" },
+      { property: "og:description", content: "Indicadores de 2026 dos setores da ACCEB - Centro Médico." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -20,7 +20,7 @@ export const Route = createFileRoute("/_authenticated/portal")({
   component: Portal,
 });
 
-const card = "group flex flex-col rounded-2xl border bg-card p-6 shadow-soft transition-all hover:-translate-y-1 hover:border-primary hover:shadow-lift";
+const card = "group flex min-w-0 flex-col rounded-2xl border border-primary/15 bg-card p-6 shadow-soft transition-all motion-safe:hover:-translate-y-1 hover:border-primary hover:shadow-lift";
 
 function Portal() {
   const { data } = useSuspenseQuery(accessQuery);
@@ -32,7 +32,7 @@ function Portal() {
       {data.sectors.length === 0 ? (
         <p className="mt-4 text-muted-foreground">Você ainda não tem acesso a nenhum setor. Peça a um administrador.</p>
       ) : (
-        <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-4 grid gap-5 sm:grid-cols-2 xl:grid-cols-2">
           {data.sectors.map((s) => (
             <Link key={s.id} {...getSectorDestination(s.slug)} className={card}>
               <FolderOpen className="size-6 text-primary" />

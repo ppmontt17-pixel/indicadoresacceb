@@ -83,6 +83,7 @@
 }
 
 :root {
+  --portal-background: oklch(0.87 0.045 165);
   --radius: 0.75rem;
   --background: oklch(0.975 0.008 170);
   --foreground: oklch(0.24 0.03 190);
@@ -125,6 +126,7 @@
 }
 
 .dark {
+  --portal-background: oklch(0.24 0.035 165);
   --background: oklch(0.129 0.042 264.695);
   --foreground: oklch(0.984 0.003 247.858);
   --card: oklch(0.208 0.042 265.755);
@@ -172,9 +174,7 @@
 }
 
 @utility portal-bg {
-  background:
-    radial-gradient(60rem 30rem at 100% 0%, oklch(0.92 0.05 175 / 60%), transparent 60%),
-    var(--color-background);
+  background: var(--portal-background);
 }
 @utility shadow-soft { box-shadow: var(--shadow-soft); }
 @utility shadow-lift { box-shadow: var(--shadow-lift); }
