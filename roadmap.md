@@ -1,4 +1,5 @@
 # Roadmap
+- [x] Criar painel de Recepção · Atendimento, importar 101 linhas de outubro de 2026 e verificar totais, busca e celular
 - [x] Organizar painéis dentro dos setores e restringir envio de planilhas a administradores
 - [x] Adicionar cadastro acessível pela tela de login e verificar validação e confirmação simulada sem criar conta real
 - [x] Conta de administradora criada e acesso ao painel verificado

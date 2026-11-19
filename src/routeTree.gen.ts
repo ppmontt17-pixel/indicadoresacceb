@@ -14,6 +14,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedFaturamentoRouteImport } from './routes/_authenticated/faturamento'
 import { Route as AuthenticatedPortalRouteImport } from './routes/_authenticated/portal'
+import { Route as AuthenticatedRecepcaoRouteImport } from './routes/_authenticated/recepcao'
 import { Route as AuthenticatedUsuariosRouteImport } from './routes/_authenticated/usuarios'
 import { Route as AuthenticatedFinanceiroIndexRouteImport } from './routes/_authenticated/financeiro/index'
 import { Route as AuthenticatedSetorSlugRouteImport } from './routes/_authenticated/setor.$slug'
@@ -44,6 +45,11 @@ const AuthenticatedPortalRoute = AuthenticatedPortalRouteImport.update({
   path: '/portal',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedRecepcaoRoute = AuthenticatedRecepcaoRouteImport.update({
+  id: '/recepcao',
+  path: '/recepcao',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedUsuariosRoute = AuthenticatedUsuariosRouteImport.update({
   id: '/usuarios',
   path: '/usuarios',
@@ -72,6 +78,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/faturamento': typeof AuthenticatedFaturamentoRoute
   '/portal': typeof AuthenticatedPortalRoute
+  '/recepcao': typeof AuthenticatedRecepcaoRoute
   '/usuarios': typeof AuthenticatedUsuariosRoute
   '/setor/$slug': typeof AuthenticatedSetorSlugRoute
   '/financeiro/': typeof AuthenticatedFinanceiroIndexRoute
@@ -82,6 +89,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/faturamento': typeof AuthenticatedFaturamentoRoute
   '/portal': typeof AuthenticatedPortalRoute
+  '/recepcao': typeof AuthenticatedRecepcaoRoute
   '/usuarios': typeof AuthenticatedUsuariosRoute
   '/setor/$slug': typeof AuthenticatedSetorSlugRoute
   '/financeiro': typeof AuthenticatedFinanceiroIndexRoute
@@ -94,6 +102,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/_authenticated/faturamento': typeof AuthenticatedFaturamentoRoute
   '/_authenticated/portal': typeof AuthenticatedPortalRoute
+  '/_authenticated/recepcao': typeof AuthenticatedRecepcaoRoute
   '/_authenticated/usuarios': typeof AuthenticatedUsuariosRoute
   '/_authenticated/setor/$slug': typeof AuthenticatedSetorSlugRoute
   '/_authenticated/financeiro/': typeof AuthenticatedFinanceiroIndexRoute
@@ -106,6 +115,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/faturamento'
     | '/portal'
+    | '/recepcao'
     | '/usuarios'
     | '/setor/$slug'
     | '/financeiro/'
@@ -116,6 +126,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/faturamento'
     | '/portal'
+    | '/recepcao'
     | '/usuarios'
     | '/setor/$slug'
     | '/financeiro'
@@ -127,6 +138,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/_authenticated/faturamento'
     | '/_authenticated/portal'
+    | '/_authenticated/recepcao'
     | '/_authenticated/usuarios'
     | '/_authenticated/setor/$slug'
     | '/_authenticated/financeiro/'
@@ -176,6 +188,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPortalRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/recepcao': {
+      id: '/_authenticated/recepcao'
+      path: '/recepcao'
+      fullPath: '/recepcao'
+      preLoaderRoute: typeof AuthenticatedRecepcaoRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/usuarios': {
       id: '/_authenticated/usuarios'
       path: '/usuarios'
@@ -210,6 +229,7 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedFaturamentoRoute: typeof AuthenticatedFaturamentoRoute
   AuthenticatedPortalRoute: typeof AuthenticatedPortalRoute
+  AuthenticatedRecepcaoRoute: typeof AuthenticatedRecepcaoRoute
   AuthenticatedUsuariosRoute: typeof AuthenticatedUsuariosRoute
   AuthenticatedSetorSlugRoute: typeof AuthenticatedSetorSlugRoute
   AuthenticatedFinanceiroIndexRoute: typeof AuthenticatedFinanceiroIndexRoute
@@ -219,6 +239,7 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedFaturamentoRoute: AuthenticatedFaturamentoRoute,
   AuthenticatedPortalRoute: AuthenticatedPortalRoute,
+  AuthenticatedRecepcaoRoute: AuthenticatedRecepcaoRoute,
   AuthenticatedUsuariosRoute: AuthenticatedUsuariosRoute,
   AuthenticatedSetorSlugRoute: AuthenticatedSetorSlugRoute,
   AuthenticatedFinanceiroIndexRoute: AuthenticatedFinanceiroIndexRoute,

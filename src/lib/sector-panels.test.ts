@@ -2,6 +2,9 @@ import { describe, expect, it } from "vitest";
 import { canUploadSpreadsheets, getSectorPanel } from "./sector-panels";
 
 describe("Organização dos setores", () => {
+  it("associa recepção ao seu painel", () => {
+    expect(getSectorPanel("recepcao")?.to).toBe("/recepcao");
+  });
   it("associa o painel de faturamento ao setor de faturamento", () => {
     expect(getSectorPanel("faturamento")?.to).toBe("/faturamento");
   });

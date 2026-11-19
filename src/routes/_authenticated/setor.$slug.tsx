@@ -11,6 +11,8 @@ import { AppShell } from "@/components/AppShell";
 import { accessQuery } from "@/lib/access";
 import { canUploadSpreadsheets, getSectorPanel } from "@/lib/sector-panels";
 import { FaturamentoImportButton } from "@/features/faturamento/import-button";
+import { isReceptionRows, parseReceptionSheet } from "@/features/recepcao/report";
+import { ReceptionDashboard } from "@/features/recepcao/dashboard";
 import { analyzeColumns, fmt, groupSum, sumColumn, type Row } from "@/lib/report-stats";
 import { Button } from "@/components/ui/button";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
@@ -78,7 +80,9 @@ function SectorPage() {
       const inserts = wb.SheetNames.flatMap((name) => {
         const sheet = wb.Sheets[name];
         if (!sheet) return [];
-        const rows = XLSX.utils.sheet_to_json<Row>(sheet, { defval: "" });
+        const rows = sector.slug === "recepcao"
+          ? parseReceptionSheet(XLSX.utils.sheet_to_json<unknown[]>(sheet, { header: 1, defval: "" }))
+          : XLSX.utils.sheet_to_json<Row>(sheet, { defval: "" });
         const columns = Object.keys(rows[0] ?? {});
         return [{ sector_id: sector.id, file_name: file.name, sheet_name: name, columns, rows: rows as unknown as Json, count: rows.length, uploaded_by: user.id }];
       }).filter((s) => s.count > 0).map(({ count: _c, ...rest }) => rest);
@@ -88,8 +92,8 @@ function SectorPage() {
       toast.success(`${inserts.length} aba(s) importada(s)`);
       setSelectedId(null);
       await qc.invalidateQueries({ queryKey: ["reports", sector.id] });
-    } catch {
-      toast.error("Não foi possível ler essa planilha.");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Não foi possível ler essa planilha.");
     } finally {
       setBusy(false);
       if (fileRef.current) fileRef.current.value = "";
@@ -158,7 +162,9 @@ function SectorPage() {
             </Select>
             <Button variant="ghost" size="sm" onClick={() => remove(report.id)}><Trash2 /> Remover</Button>
           </div>
-          <Dashboard key={report.id} columns={report.columns} rows={report.rows} />
+          {sector.slug === "recepcao" && isReceptionRows(report.rows)
+            ? <ReceptionDashboard key={report.id} rows={report.rows} />
+            : <Dashboard key={report.id} columns={report.columns} rows={report.rows} />}
         </>
       )}
     </AppShell>
