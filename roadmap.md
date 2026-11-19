@@ -1,4 +1,5 @@
 # Roadmap
+- [x] Recuperar o relatório de Recepção da planilha original: 101 linhas idênticas ao arquivo, 2.834 atendimentos e seis indicadores verificados com acesso autenticado
 - [x] Abrir painéis diretamente pelos setores na página inicial e remover a antiga área vazia de relatórios; entrada e retorno verificados
 - [x] Colocar logo, nome e indicadores na lateral esquerda do painel de Recepção, seguindo o Financeiro; navegação e celular verificados
 - [x] Remover envios de planilhas de todos os setores e painéis; dados e leitura existentes verificados com administradora
