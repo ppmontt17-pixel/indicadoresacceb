@@ -1,14 +1,16 @@
-import { createFileRoute, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { queryOptions, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useMemo, useRef, useState } from "react";
 import * as XLSX from "xlsx";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
-import { FileSpreadsheet, Trash2, Upload } from "lucide-react";
+import { ArrowUpRight, FileSpreadsheet, Trash2, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import type { Json } from "@/integrations/supabase/types";
 import { AppShell } from "@/components/AppShell";
 import { accessQuery } from "@/lib/access";
+import { canUploadSpreadsheets, getSectorPanel } from "@/lib/sector-panels";
+import { FaturamentoImportButton } from "@/features/faturamento/import-button";
 import { analyzeColumns, fmt, groupSum, sumColumn, type Row } from "@/lib/report-stats";
 import { Button } from "@/components/ui/button";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
@@ -56,6 +58,9 @@ function AppShellFallback({ text }: { text: string }) {
 function SectorPage() {
   const { sector } = Route.useLoaderData();
   const { data: reports } = useSuspenseQuery(reportsQuery(sector.id));
+  const { data: access } = useSuspenseQuery(accessQuery);
+  const canUpload = canUploadSpreadsheets(access.isAdmin);
+  const panel = getSectorPanel(sector.slug);
   const qc = useQueryClient();
   const fileRef = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
@@ -63,14 +68,19 @@ function SectorPage() {
   const report = reports.find((r) => r.id === selectedId) ?? reports[0];
 
   async function onFile(file: File) {
+    if (!canUpload) return;
     setBusy(true);
     try {
       const wb = XLSX.read(await file.arrayBuffer());
       const { data: auth } = await supabase.auth.getUser();
-      const inserts = wb.SheetNames.map((name) => {
-        const rows = XLSX.utils.sheet_to_json<Row>(wb.Sheets[name]!, { defval: "" });
-        const columns = rows.length ? Object.keys(rows[0]!) : [];
-        return { sector_id: sector.id, file_name: file.name, sheet_name: name, columns, rows: rows as unknown as Json, count: rows.length, uploaded_by: auth.user!.id };
+      const user = auth.user;
+      if (!user) throw new Error("Entre novamente para enviar a planilha.");
+      const inserts = wb.SheetNames.flatMap((name) => {
+        const sheet = wb.Sheets[name];
+        if (!sheet) return [];
+        const rows = XLSX.utils.sheet_to_json<Row>(sheet, { defval: "" });
+        const columns = Object.keys(rows[0] ?? {});
+        return [{ sector_id: sector.id, file_name: file.name, sheet_name: name, columns, rows: rows as unknown as Json, count: rows.length, uploaded_by: user.id }];
       }).filter((s) => s.count > 0).map(({ count: _c, ...rest }) => rest);
       if (!inserts.length) throw new Error("Planilha vazia");
       const { error } = await supabase.from("reports").insert(inserts);
@@ -104,17 +114,34 @@ function SectorPage() {
           <h1 className="font-display text-4xl text-foreground">{sector.name}</h1>
           <p className="mt-1 text-muted-foreground">{sector.description}</p>
         </div>
-        <input ref={fileRef} type="file" accept=".xlsx,.xls,.csv" hidden onChange={(e) => e.target.files?.[0] && onFile(e.target.files[0])} />
-        <Button onClick={() => fileRef.current?.click()} disabled={busy}>
-          <Upload /> {busy ? "Importando..." : "Enviar planilha"}
-        </Button>
       </div>
+
+      {panel && (
+        <section className="mt-8">
+          <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Painel do setor</h2>
+          <Link to={panel.to} className="group mt-3 flex max-w-xl items-center justify-between gap-4 rounded-lg border bg-card p-6 shadow-soft hover:border-primary">
+            <div><h3 className="font-display text-2xl text-foreground">{panel.name}</h3><p className="mt-1 text-sm text-muted-foreground">{panel.description}</p></div>
+            <ArrowUpRight className="size-5 shrink-0 text-primary" />
+          </Link>
+        </section>
+      )}
+
+      <section className="mt-8 flex flex-wrap items-center justify-between gap-4 border-y py-5" aria-label={`Planilhas — ${sector.name}`}>
+        <div>
+          <h2 className="flex items-center gap-2 font-semibold text-foreground"><FileSpreadsheet className="size-5 text-primary" /> Planilhas — {sector.name}</h2>
+          <p className="mt-1 text-sm text-muted-foreground">{canUpload ? "Envio de planilhas do setor · Administrador" : "Envio de planilhas exclusivo do administrador."}</p>
+        </div>
+        {canUpload && (sector.slug === "faturamento" ? <FaturamentoImportButton /> : <>
+          <input ref={fileRef} type="file" accept=".xlsx,.xls,.csv" hidden onChange={(e) => e.target.files?.[0] && onFile(e.target.files[0])} />
+          <Button onClick={() => fileRef.current?.click()} disabled={busy}><Upload /> {busy ? "Importando..." : "Enviar planilha"}</Button>
+        </>)}
+      </section>
 
       {!report ? (
         <div className="mt-10 rounded-2xl border border-dashed bg-card p-12 text-center">
           <FileSpreadsheet className="mx-auto size-10 text-primary" />
           <p className="mt-4 text-foreground">Nenhuma planilha enviada ainda.</p>
-          <p className="text-sm text-muted-foreground">Envie um arquivo Excel ou CSV para gerar o painel.</p>
+           <p className="text-sm text-muted-foreground">{canUpload ? "Nenhum relatório importado para este setor." : "Aguardando o envio de planilhas pelo administrador."}</p>
         </div>
       ) : (
         <>

@@ -15,6 +15,13 @@
       "when": 1794668527729,
       "tag": "0001_faturamento_glosas",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1795048524928,
+      "tag": "0002_admin_only_report_uploads",
+      "breakpoints": true
     }
   ]
 }

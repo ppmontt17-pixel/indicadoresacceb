@@ -99,7 +99,7 @@ export function DashboardShell({ active, title, subtitle, headerActions, onNavAc
       <aside className="fixed inset-y-0 left-0 z-40 hidden w-60 border-r border-sidebar-border bg-sidebar lg:flex lg:flex-col">
         <Brand />
         <NavContent active={active} onNavAction={onNavAction} />
-        <Link to="/portal" className="m-4 rounded-md border-t border-sidebar-border px-3 pt-4 text-sm text-sidebar-foreground/70 hover:text-sidebar-foreground">← Voltar ao portal</Link>
+        <Link to="/setor/$slug" params={{ slug: "financeiro-custos" }} className="m-4 rounded-md border-t border-sidebar-border px-3 pt-4 text-sm text-sidebar-foreground/70 hover:text-sidebar-foreground">← Voltar ao setor Financeiro</Link>
       </aside>
 
       {mobileNav ? (
@@ -110,6 +110,7 @@ export function DashboardShell({ active, title, subtitle, headerActions, onNavAc
               <Button variant="ghost" size="icon" aria-label="Fechar menu" onClick={closeMobile}><X /></Button>
             </div>
             <NavContent active={active} onNavAction={onNavAction} closeMobile={closeMobile} />
+            <Link to="/setor/$slug" params={{ slug: "financeiro-custos" }} className="px-3 py-4 text-sm text-sidebar-foreground">← Voltar ao setor Financeiro</Link>
           </aside>
         </div>
       ) : null}

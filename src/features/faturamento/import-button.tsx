@@ -1,10 +1,12 @@
 import { useRef, useState } from "react";
 import * as XLSX from "xlsx";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { Upload } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { accessQuery } from "@/lib/access";
+import { canUploadSpreadsheets } from "@/lib/sector-panels";
 import {
   buildFaturamentoInserts,
   buildGlosaInserts,
@@ -36,22 +38,26 @@ export function FaturamentoImportButton() {
   const fileRef = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
   const qc = useQueryClient();
+  const { data: access } = useSuspenseQuery(accessQuery);
+  const canUpload = canUploadSpreadsheets(access.isAdmin);
 
   async function onFile(file: File) {
+    if (!canUpload) return;
     setBusy(true);
     try {
       const wb = XLSX.read(await file.arrayBuffer());
-      const sheets: SheetData[] = wb.SheetNames.map((name) => ({
-        name,
-        rows: XLSX.utils.sheet_to_json<Row>(wb.Sheets[name]!, { defval: "" }),
-      })).filter((s) => s.rows.length > 0);
+      const sheets: SheetData[] = wb.SheetNames.flatMap((name) => {
+        const sheet = wb.Sheets[name];
+        if (!sheet) return [];
+        return [{ name, rows: XLSX.utils.sheet_to_json<Row>(sheet, { defval: "" }) }];
+      }).filter((s) => s.rows.length > 0);
 
       let fatCount = 0;
       let glosaCount = 0;
       const ignoradas: string[] = [];
 
       for (const sheet of sheets) {
-        const columns = Object.keys(sheet.rows[0]!);
+        const columns = Object.keys(sheet.rows[0] ?? {});
         if (isFaturamentoSheet(columns)) {
           const inserts = buildFaturamentoInserts(sheet.rows, columns);
           if (inserts.length) {
@@ -98,6 +104,8 @@ export function FaturamentoImportButton() {
       if (fileRef.current) fileRef.current.value = "";
     }
   }
+
+  if (!canUpload) return null;
 
   return (
     <>

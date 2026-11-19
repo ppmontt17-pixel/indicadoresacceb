@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { ArrowUpRight, FolderOpen, Receipt, Wallet } from "lucide-react";
+import { FolderOpen } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { accessQuery } from "@/lib/access";
 
@@ -18,11 +18,6 @@ export const Route = createFileRoute("/_authenticated/portal")({
   loader: ({ context }) => context.queryClient.ensureQueryData(accessQuery),
   component: Portal,
 });
-
-const panels = [
-  { name: "Financeiro", description: "Custos, fluxo de caixa e serviços principais.", to: "/financeiro" as const, icon: Wallet },
-  { name: "Faturamento", description: "Receita por convênio e status de glosas.", to: "/faturamento" as const, icon: Receipt },
-];
 
 const card = "group flex flex-col rounded-2xl border bg-card p-6 shadow-soft transition-all hover:-translate-y-1 hover:border-primary hover:shadow-lift";
 
@@ -47,19 +42,6 @@ function Portal() {
         </div>
       )}
 
-      <h2 className="mt-12 text-sm font-semibold uppercase tracking-wider text-muted-foreground">Painéis</h2>
-      <div className="mt-4 grid gap-4 md:grid-cols-2">
-        {panels.map((p) => (
-          <Link key={p.name} to={p.to} className={card}>
-            <div className="flex items-start justify-between">
-              <p.icon className="size-6 text-primary" />
-              <ArrowUpRight className="size-5 text-muted-foreground group-hover:text-primary" />
-            </div>
-            <h3 className="mt-6 font-display text-2xl text-foreground">{p.name}</h3>
-            <p className="mt-1 text-sm text-muted-foreground">{p.description}</p>
-          </Link>
-        ))}
-      </div>
     </AppShell>
   );
 }

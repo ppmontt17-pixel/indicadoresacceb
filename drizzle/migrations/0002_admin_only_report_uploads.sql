@@ -1,0 +1,1 @@
+ALTER POLICY "reports insert" ON public.reports TO authenticated WITH CHECK (uploaded_by = auth.uid() AND public.has_role(auth.uid(), 'admin'::public.app_role));
