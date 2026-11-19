@@ -42,8 +42,8 @@ export function AppShell({ children }: { children: ReactNode }) {
               <Link to="/portal" className={link} activeProps={active}><Home className="size-4 shrink-0" /><span className="min-w-0">Início</span></Link>
               {data.sectors.map((s) => <Link key={s.id} {...getSectorDestination(s.slug)} className={link} activeProps={active}><FolderOpen className="size-4 shrink-0" /><span className="min-w-0">{s.name}</span></Link>)}
               {data.isAdmin && <Link to="/usuarios" className={link} activeProps={active}><Users className="size-4 shrink-0" /><span className="min-w-0">Usuários</span></Link>}
+              <Button variant="ghost" className="h-auto w-full justify-start gap-3 rounded-md px-3 py-3 text-sm font-normal text-muted-foreground hover:bg-accent hover:text-accent-foreground" onClick={signOut}><LogOut className="size-4 shrink-0" /> Sair</Button>
             </nav>}
-            <div className="mt-4 border-t border-primary/20 pt-4"><Button variant="ghost" size="sm" className="w-full justify-start" onClick={signOut}><LogOut /> Sair</Button></div>
           </aside>
           <div className="min-w-0 lg:col-start-1 lg:row-start-2">{children}</div>
       </div>
