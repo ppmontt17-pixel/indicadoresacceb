@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { accessQuery } from "@/lib/access";
 import { getSectorDestination } from "@/lib/sector-panels";
 import { Button } from "@/components/ui/button";
+import accebLogo from "@/assets/acceb-logo.png";
 
 export function AppShell({ children }: { children: ReactNode }) {
   const { data } = useSuspenseQuery(accessQuery);
@@ -23,8 +24,11 @@ export function AppShell({ children }: { children: ReactNode }) {
     <main className="portal-bg min-h-screen px-6 py-8">
       <div className="mx-auto max-w-6xl">
         <header className="flex flex-wrap items-center justify-between gap-4">
-          <div className="flex flex-wrap items-center gap-2">
-            <Link to="/portal" className="mr-4 text-xs font-semibold uppercase tracking-[0.2em] text-primary">ACCEB</Link>
+          <div className="flex min-w-0 flex-wrap items-center gap-2">
+            <Link to="/portal" className="mr-4 flex max-w-full items-center gap-3 text-sm font-semibold text-primary">
+              <img src={accebLogo} alt="Logotipo da ACCEB" className="size-14 shrink-0 object-contain" />
+              <span>ACCEB - CLÍNICA POPULAR</span>
+            </Link>
             <Link to="/portal" className={link} activeProps={active}>Início</Link>
             {data.sectors.map((s) => (
               <Link key={s.id} {...getSectorDestination(s.slug)} className={link} activeProps={active}>{s.name}</Link>

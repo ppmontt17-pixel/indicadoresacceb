@@ -8,10 +8,10 @@ import { getSectorDestination } from "@/lib/sector-panels";
 export const Route = createFileRoute("/_authenticated/portal")({
   head: () => ({
     meta: [
-      { title: "Início — Portal ACCEB" },
-      { name: "description", content: "Painéis e setores da ACCEB em um só lugar." },
-      { property: "og:title", content: "Início — Portal ACCEB" },
-      { property: "og:description", content: "Painéis e setores da ACCEB em um só lugar." },
+      { title: "Indicadores ACCEB - 2026 — Clínica Popular" },
+      { name: "description", content: "Indicadores de 2026 dos setores da ACCEB - CLÍNICA POPULAR." },
+      { property: "og:title", content: "Indicadores ACCEB - 2026 — Clínica Popular" },
+      { property: "og:description", content: "Indicadores de 2026 dos setores da ACCEB - CLÍNICA POPULAR." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -26,7 +26,7 @@ function Portal() {
   const { data } = useSuspenseQuery(accessQuery);
   return (
     <AppShell>
-      <h1 className="font-display text-5xl leading-tight text-foreground">Tudo da ACCEB, em um só lugar.</h1>
+      <h1 className="font-display text-4xl leading-tight text-foreground sm:text-5xl">Indicadores ACCEB - 2026</h1>
 
       <h2 className="mt-12 text-sm font-semibold uppercase tracking-wider text-muted-foreground">Setores</h2>
       {data.sectors.length === 0 ? (
