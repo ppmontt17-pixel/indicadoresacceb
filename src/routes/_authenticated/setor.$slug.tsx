@@ -1,8 +1,8 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound, redirect } from "@tanstack/react-router";
 import { queryOptions, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
-import { ArrowUpRight, FileSpreadsheet, Trash2 } from "lucide-react";
+import { ArrowUpRight, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/AppShell";
@@ -42,6 +42,8 @@ export const Route = createFileRoute("/_authenticated/setor/$slug")({
     const access = await context.queryClient.ensureQueryData(accessQuery);
     const sector = access.sectors.find((s) => s.slug === params.slug);
     if (!sector) throw notFound();
+    const panel = getSectorPanel(sector.slug);
+    if (panel) throw redirect({ to: panel.to });
     await context.queryClient.ensureQueryData(reportsQuery(sector.id));
     return { sector };
   },
@@ -92,12 +94,7 @@ function SectorPage() {
         </section>
       )}
 
-      {!report ? (
-        <div className="mt-10 rounded-2xl border border-dashed bg-card p-12 text-center">
-          <FileSpreadsheet className="mx-auto size-10 text-primary" />
-          <p className="mt-4 text-foreground">Nenhum relatório disponível para este setor.</p>
-        </div>
-      ) : (
+      {report && (
         <>
           <div className="mt-8 flex flex-wrap items-center gap-3">
             <Select value={report.id} onValueChange={setSelectedId}>

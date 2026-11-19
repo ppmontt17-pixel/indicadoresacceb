@@ -1,4 +1,5 @@
 # Roadmap
+- [x] Abrir painéis diretamente pelos setores na página inicial e remover a antiga área vazia de relatórios; entrada e retorno verificados
 - [x] Colocar logo, nome e indicadores na lateral esquerda do painel de Recepção, seguindo o Financeiro; navegação e celular verificados
 - [x] Remover envios de planilhas de todos os setores e painéis; dados e leitura existentes verificados com administradora
 - [x] Criar painel de Recepção · Atendimento, importar 101 linhas de outubro de 2026 e verificar totais, busca e celular

@@ -1,7 +1,15 @@
 import { describe, expect, it } from "vitest";
-import { canUploadSpreadsheets, getSectorPanel } from "./sector-panels";
+import { canUploadSpreadsheets, getSectorPanel, getSectorDestination } from "./sector-panels";
 
 describe("Organização dos setores", () => {
+  it("abre diretamente os painéis ao selecionar um setor", () => {
+    expect(getSectorDestination("recepcao")).toEqual({ to: "/recepcao" });
+    expect(getSectorDestination("faturamento")).toEqual({ to: "/faturamento" });
+    expect(getSectorDestination("financeiro-custos")).toEqual({ to: "/financeiro" });
+  });
+  it("mantém o acesso ao setor que ainda não tem painel", () => {
+    expect(getSectorDestination("compras")).toEqual({ to: "/setor/$slug", params: { slug: "compras" } });
+  });
   it("associa recepção ao seu painel", () => {
     expect(getSectorPanel("recepcao")?.to).toBe("/recepcao");
   });

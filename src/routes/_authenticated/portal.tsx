@@ -3,6 +3,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { FolderOpen } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { accessQuery } from "@/lib/access";
+import { getSectorDestination } from "@/lib/sector-panels";
 
 export const Route = createFileRoute("/_authenticated/portal")({
   head: () => ({
@@ -33,7 +34,7 @@ function Portal() {
       ) : (
         <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {data.sectors.map((s) => (
-            <Link key={s.id} to="/setor/$slug" params={{ slug: s.slug }} className={card}>
+            <Link key={s.id} {...getSectorDestination(s.slug)} className={card}>
               <FolderOpen className="size-6 text-primary" />
               <h3 className="mt-6 font-display text-2xl text-foreground">{s.name}</h3>
               <p className="mt-1 text-sm text-muted-foreground">{s.description}</p>

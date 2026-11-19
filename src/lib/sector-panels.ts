@@ -12,3 +12,9 @@ export function getSectorPanel(slug: string) {
 export function canUploadSpreadsheets(_isAdmin: boolean) {
   return false;
 }
+
+export function getSectorDestination(slug: string) {
+  const panel = getSectorPanel(slug);
+  if (panel) return { to: panel.to };
+  return { to: "/setor/$slug" as const, params: { slug } };
+}

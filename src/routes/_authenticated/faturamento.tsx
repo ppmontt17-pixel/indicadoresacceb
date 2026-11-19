@@ -230,7 +230,7 @@ function Dashboard() {
             </div>
           </Link>
           <div className="flex flex-wrap items-center gap-2">
-            <Button asChild variant="outline" size="sm"><Link to="/setor/$slug" params={{ slug: "faturamento" }}>Setor de Faturamento</Link></Button>
+            <Button asChild variant="outline" size="sm"><Link to="/portal">Voltar aos setores</Link></Button>
             <div className="flex items-center rounded-lg border bg-muted/40 p-1">
               {anosDisponiveis.map((a) => (
                 <Button

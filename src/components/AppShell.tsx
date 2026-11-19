@@ -4,6 +4,7 @@ import { LogOut } from "lucide-react";
 import type { ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { accessQuery } from "@/lib/access";
+import { getSectorDestination } from "@/lib/sector-panels";
 import { Button } from "@/components/ui/button";
 
 export function AppShell({ children }: { children: ReactNode }) {
@@ -26,7 +27,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             <Link to="/portal" className="mr-4 text-xs font-semibold uppercase tracking-[0.2em] text-primary">ACCEB</Link>
             <Link to="/portal" className={link} activeProps={active}>Início</Link>
             {data.sectors.map((s) => (
-              <Link key={s.id} to="/setor/$slug" params={{ slug: s.slug }} className={link} activeProps={active}>{s.name}</Link>
+              <Link key={s.id} {...getSectorDestination(s.slug)} className={link} activeProps={active}>{s.name}</Link>
             ))}
             {data.isAdmin && <Link to="/usuarios" className={link} activeProps={active}>Usuários</Link>}
           </div>
