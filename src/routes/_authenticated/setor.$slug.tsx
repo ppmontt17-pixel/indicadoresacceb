@@ -1,17 +1,14 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { queryOptions, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
-import { useMemo, useRef, useState } from "react";
-import * as XLSX from "xlsx";
+import { useMemo, useState } from "react";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
-import { ArrowUpRight, FileSpreadsheet, Trash2, Upload } from "lucide-react";
+import { ArrowUpRight, FileSpreadsheet, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import type { Json } from "@/integrations/supabase/types";
 import { AppShell } from "@/components/AppShell";
 import { accessQuery } from "@/lib/access";
-import { canUploadSpreadsheets, getSectorPanel } from "@/lib/sector-panels";
-import { FaturamentoImportButton } from "@/features/faturamento/import-button";
-import { isReceptionRows, parseReceptionSheet } from "@/features/recepcao/report";
+import { getSectorPanel } from "@/lib/sector-panels";
+import { isReceptionRows } from "@/features/recepcao/report";
 import { ReceptionDashboard } from "@/features/recepcao/dashboard";
 import { analyzeColumns, fmt, groupSum, sumColumn, type Row } from "@/lib/report-stats";
 import { Button } from "@/components/ui/button";
@@ -60,45 +57,10 @@ function AppShellFallback({ text }: { text: string }) {
 function SectorPage() {
   const { sector } = Route.useLoaderData();
   const { data: reports } = useSuspenseQuery(reportsQuery(sector.id));
-  const { data: access } = useSuspenseQuery(accessQuery);
-  const canUpload = canUploadSpreadsheets(access.isAdmin);
   const panel = getSectorPanel(sector.slug);
   const qc = useQueryClient();
-  const fileRef = useRef<HTMLInputElement>(null);
-  const [busy, setBusy] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const report = reports.find((r) => r.id === selectedId) ?? reports[0];
-
-  async function onFile(file: File) {
-    if (!canUpload) return;
-    setBusy(true);
-    try {
-      const wb = XLSX.read(await file.arrayBuffer());
-      const { data: auth } = await supabase.auth.getUser();
-      const user = auth.user;
-      if (!user) throw new Error("Entre novamente para enviar a planilha.");
-      const inserts = wb.SheetNames.flatMap((name) => {
-        const sheet = wb.Sheets[name];
-        if (!sheet) return [];
-        const rows = sector.slug === "recepcao"
-          ? parseReceptionSheet(XLSX.utils.sheet_to_json<unknown[]>(sheet, { header: 1, defval: "" }))
-          : XLSX.utils.sheet_to_json<Row>(sheet, { defval: "" });
-        const columns = Object.keys(rows[0] ?? {});
-        return [{ sector_id: sector.id, file_name: file.name, sheet_name: name, columns, rows: rows as unknown as Json, count: rows.length, uploaded_by: user.id }];
-      }).filter((s) => s.count > 0).map(({ count: _c, ...rest }) => rest);
-      if (!inserts.length) throw new Error("Planilha vazia");
-      const { error } = await supabase.from("reports").insert(inserts);
-      if (error) throw error;
-      toast.success(`${inserts.length} aba(s) importada(s)`);
-      setSelectedId(null);
-      await qc.invalidateQueries({ queryKey: ["reports", sector.id] });
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Não foi possível ler essa planilha.");
-    } finally {
-      setBusy(false);
-      if (fileRef.current) fileRef.current.value = "";
-    }
-  }
 
   async function remove(id: string) {
     if (!confirm("Remover este relatório?")) return;
@@ -130,22 +92,10 @@ function SectorPage() {
         </section>
       )}
 
-      <section className="mt-8 flex flex-wrap items-center justify-between gap-4 border-y py-5" aria-label={`Planilhas — ${sector.name}`}>
-        <div>
-          <h2 className="flex items-center gap-2 font-semibold text-foreground"><FileSpreadsheet className="size-5 text-primary" /> Planilhas — {sector.name}</h2>
-          <p className="mt-1 text-sm text-muted-foreground">{canUpload ? "Envio de planilhas do setor · Administrador" : "Envio de planilhas exclusivo do administrador."}</p>
-        </div>
-        {canUpload && (sector.slug === "faturamento" ? <FaturamentoImportButton /> : <>
-          <input ref={fileRef} type="file" accept=".xlsx,.xls,.csv" hidden onChange={(e) => e.target.files?.[0] && onFile(e.target.files[0])} />
-          <Button onClick={() => fileRef.current?.click()} disabled={busy}><Upload /> {busy ? "Importando..." : "Enviar planilha"}</Button>
-        </>)}
-      </section>
-
       {!report ? (
         <div className="mt-10 rounded-2xl border border-dashed bg-card p-12 text-center">
           <FileSpreadsheet className="mx-auto size-10 text-primary" />
-          <p className="mt-4 text-foreground">Nenhuma planilha enviada ainda.</p>
-           <p className="text-sm text-muted-foreground">{canUpload ? "Nenhum relatório importado para este setor." : "Aguardando o envio de planilhas pelo administrador."}</p>
+          <p className="mt-4 text-foreground">Nenhum relatório disponível para este setor.</p>
         </div>
       ) : (
         <>

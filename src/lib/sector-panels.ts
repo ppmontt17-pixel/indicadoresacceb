@@ -9,6 +9,6 @@ export function getSectorPanel(slug: string) {
   return undefined;
 }
 
-export function canUploadSpreadsheets(isAdmin: boolean) {
-  return isAdmin;
+export function canUploadSpreadsheets(_isAdmin: boolean) {
+  return false;
 }

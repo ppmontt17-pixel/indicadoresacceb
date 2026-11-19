@@ -11,8 +11,8 @@ describe("Organização dos setores", () => {
   it("associa o painel financeiro ao setor financeiro", () => {
     expect(getSectorPanel("financeiro-custos")?.to).toBe("/financeiro");
   });
-  it("permite envio de planilhas somente a administradores", () => {
-    expect(canUploadSpreadsheets(true)).toBe(true);
+  it("não permite envio de planilhas pelo site, inclusive para administradores", () => {
+    expect(canUploadSpreadsheets(true)).toBe(false);
     expect(canUploadSpreadsheets(false)).toBe(false);
   });
 });
